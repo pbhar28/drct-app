@@ -132,7 +132,7 @@ body {
 .event__title {
 	color: #039be5;
     margin: 0;
-	font: 600 22px/30px  sans-serif;
+	font: 600 22px/30px  Roboto, 'Montserrat', sans-serif;
 }
 
 .event__date,
