@@ -1,7 +1,12 @@
 import React, { Component } from 'react';
 import Moment from 'react-moment';
+import axios from 'axios';
 import { Modal } from './modals';
-import { LocationOn, Today } from '@material-ui/icons';
+import { LocationOn, Today, Close } from '@material-ui/icons';
+import { withStyles } from '@material-ui/core/styles';
+import Button from '@material-ui/core/Button';
+import Icon from '@material-ui/core/Icon';
+import AddIcon from '@material-ui/icons/Add';
 
 
 class EventForm extends Component {
@@ -13,8 +18,79 @@ class EventForm extends Component {
 	
 	submit(e) {
 		e.preventDefault()
-		console.log(this.refs.eventTitle.value);
-		console.log(this.refs.eventSummary.value);
+		
+		//console.log(this.refs.eventTitle.value);
+		//console.log(this.refs.eventSummary.value); 
+		//console.log(this.refs.eventLocation.value); 
+					
+		var payload = 	{
+		  "data": {
+			"type": "node--event",
+			"attributes": {
+				"title": this.refs.eventTitle.value,
+				"field_event_todate": "2018-05-28",
+				"field_event_fromdate": "2018-05-28",
+				"field_event_details": this.refs.eventSummary.value,
+				"field_location": this.refs.eventLocation.value
+			}
+		  }
+		}
+		
+		var data = JSON.stringify(payload);
+		
+		// Send a POST request
+  		axios({
+		  method: 'post',
+		  url: 'http://localhost/dcportal/jsonapi/node/event',
+		  headers: {
+				'content-type':'application/vnd.api+json',
+				'Accept':'application/vnd.api+json',
+				'authorization':'Basic YWRtaW46YWRtaW4='
+		  },
+		  data: data
+		})
+		.then(res => {
+			console.log(res);	
+			this.setState({showAddModal: false});
+		});
+		
+/* 		axios({
+		  method: 'post',
+		  url: 'http://localhost/drupal/entity/node?_format=json',
+		  headers: {
+				'content-type':'application/json',
+				'Accept':'application/json',
+				'authorization':'Basic YWRtaW46YWRtaW4='
+		  },
+		  data: {
+				"type":[{"target_id":"article", "target_type": 'node_type'}],
+				"title":[{"value":"Hello World from react app"}],
+				"body":[{"value":"How are you?"}]
+			}
+		})
+		.then(res => {
+				console.log(res);
+				console.log(res.data);
+					
+		}); */
+		
+/* 		axios.post('http://localhost/drupal/entity/node?_format=json', {
+			headers: {
+				'content-type':'application/json',		
+				'accept': 'application/json',
+				'authorization':'Basic YWRtaW46YWRtaW4='
+			},
+			body: {
+				"type":[{"target_id":"article", "target_type": 'node_type'}],
+				"title":[{"value":"Hello World from react app"}],
+				"body":[{"value":"How are you?"}]
+			}
+		})
+		.then(res => {
+				console.log(res);
+				console.log(res.data);
+		}); */
+
 	}
 	
 	render() {
@@ -32,7 +108,7 @@ class EventForm extends Component {
 							ref="eventTitle" />
 				</div>
 				<div>
-					<label htmlFor="eventSummary">Event Summary</label>
+					<label htmlFor="eventSummary">Event Details</label>
 					<input  id="eventSummary" 
 							type="text" 
 							required 
@@ -43,7 +119,6 @@ class EventForm extends Component {
 					<label htmlFor="eventFromDate">Event Start date</label>
 					<input  id="eventFromDate" 
 							type="date"
-							required 
 							ref="eventFromDate" />
 				</div>
 				<div>
@@ -52,6 +127,12 @@ class EventForm extends Component {
 							type="date"
 							ref="eventToDate" />
 				</div>
+				<div>
+					<label htmlFor="eventLocation">Event Location</label>
+					<input  id="eventLocation" 
+							type="text"
+							ref="eventLocation" />
+				</div>
 				<button>Add Event</button>
 			</form>
 		)
@@ -59,11 +140,73 @@ class EventForm extends Component {
 	
 }
 
+class DeleteConfirm extends Component {
+	
+	constructor(props) {
+		super(props)
+		this.submit = this.submit.bind(this)
+	}
+	
+	submit(e) {
+		e.preventDefault()
+/* 		console.log(this.refs.eventTitle.value); */
+		
+			
+		var payload = 	{
+		  "data": {
+			"type": "node--event",
+			"attributes": {
+				"title": this.refs.eventTitle.value,
+				"field_event_end_date": "2018-05-06T08:48:03",
+				"field_event_start_date": "2018-05-06T08:48:03",
+				"field_event_summary": this.refs.eventSummary.value
+			}
+		  }
+		}
+		
+		//var data = JSON.stringify(payload);
+		
+		// Send a POST request
+/* 		axios({
+			  method: 'delete',
+			  url: 'http://localhost/drupal/jsonapi/node/event',
+			  headers: {
+					'content-type':'application/vnd.api+json',
+					'Accept':'application/vnd.api+json',
+					'authorization':'Basic YWRtaW46YWRtaW4='
+			  },
+			  data: data
+			})
+			.then(res => {
+					console.log(res);
+					console.log(res.data);				
+			});
+ */
+	}
+	
+	render() {
+		
+		const {eventTitle} = this.props;
+		
+		console.log(this);
+		
+		return (
+			
+			<div>
+				<p>Are you sure you want to remove {eventTitle} event?</p>
+				<button onClick={this.submit}>Yes</button>
+				<button>No</button>		
+			</div>
+		)
+	}
+	
+}
+
 EventForm.defaultProps = {
-	eventTitle: "Sample Form event title",
-	eventSummary: "",
-	eventFromDate:"05-16-2018",
-	eventToDate: "05-16-2018",
+	eventTitle: "Dummy event title",
+	eventSummary: "Dummy description",
+	eventFromDate:"2018-05-28",
+	eventToDate: "2018-05-28"
 }
 
 
@@ -77,16 +220,22 @@ export class EventsContainer extends Component {
       events: [],
 	  showModal: false	  
     };
-	this.handleShow = this.handleShow.bind(this);
-    this.handleHide = this.handleHide.bind(this);
+	this.openAddModal = this.openAddModal.bind(this);
+    this.closeAddModal = this.closeAddModal.bind(this);
+	this.openDeleteModal = this.openDeleteModal.bind(this);
   }
 
-	handleShow() {
-		this.setState({showModal: true});
+	openAddModal() {
+		this.setState({showAddModal: true});
 	}
   
-	handleHide() {
-		this.setState({showModal: false});
+	closeAddModal() {
+		this.setState({showAddModal: false});
+		this.setState({showDeleteModal: false});
+	}
+	
+	openDeleteModal() {
+		this.setState({showDeleteModal: true});
 	}
   
   componentDidMount() {
@@ -115,25 +264,24 @@ export class EventsContainer extends Component {
 
   render() {
     const { error, isLoaded, events } = this.state;
-	console.log('isLoaded ', isLoaded);
-	console.log('error ', error);
+	//const { classes } = this.props;
+	//console.log('isLoaded ', isLoaded);
+	//console.log('error ', error);
 	console.log('events ', events);
 	
 	// Show a Modal on click.
     // (In a real app, don't forget to use ARIA attributes
     // for accessibility!)
-    const modal = this.state.showModal ? (
+    const modal = (this.state.showAddModal || this.state.showDeleteModal) ? (
       <Modal>
         <div className="modal">
-          <button onClick={this.handleHide}>Hide modal</button>
-		  <div>
-            <p>With a portal, we can render content into a different
-            part of the DOM, as if it were any other React child.
-			This is being rendered inside the #modal-container div.</p>
-			
-			<EventForm />
-
-          </div>          
+					
+		<div className="modal__form-container">	
+			<button className="modal__btn-close" onClick={this.closeAddModal}>Close</button>
+			{this.state.showAddModal ? <EventForm /> : null}
+			{this.state.showDeleteModal ? <DeleteConfirm /> : null}
+		</div>  
+        
         </div>
       </Modal>
     ) : null;
@@ -147,42 +295,49 @@ export class EventsContainer extends Component {
     } else {
       return (
 		<div>
-		<section className="events__container">
-			{events.map(item => (
-				<div className='event items--row' key={item.field_event_name_1}>
-					<div className="event__images">
-						<img src={drupalPath + item.field_event_pictures} alt="" /> 
-					</div>
-					<div className="event__info">
-						<h3 className="event__title">{item.field_event_name_1}</h3> 
-						<div>
-							<Today />
-							<div className="event__date">
-								<span>
-									<Moment format="MMM DD">
-										{item.field_event_fromdate}
-									</Moment>
-								</span>
-								-
-								<span>
-									<Moment format="MMM DD">
-										{item.field_event_todate}
-									</Moment>
-								</span>	
-							</div>
-							<div className="event__location">
-								<LocationOn /><span>{item.field_location}</span>
-							</div>
+			<div className="event__btn-add_container">
+				<Button className="event__item-add" variant="fab" color="primary" aria-label="add" onClick={this.openAddModal}>
+					<AddIcon />
+				</Button>
+			</div>
+			
+			<section className="events__container">
+				{events.map(item => (
+					<div className='event items--row' key={item.index}>
+						<div className="event__images">
+							<img src={drupalPath + item.field_event_pictures} alt="" /> 
 						</div>
-						<p>{item.field_event_details}</p>
-					</div>
+						<div className="event__info">
+							<h3 className="event__title">{item.title}</h3> 
+							<div>
+								<Today />
+								<div className="event__date">
+									<span>
+										<Moment format="MMM DD">
+											{item.field_event_fromdate}
+										</Moment>
+									</span>
+									-
+									<span>
+										<Moment format="MMM DD">
+											{item.field_event_todate}
+										</Moment>
+									</span>	
+								</div>
+								<div className="event__location">
+									<LocationOn /><span>{item.field_location}</span>
+								</div>
+							</div>
+							<p>{item.field_event_details}</p>
+							<Button data-item-id={item.uuid} className="event__item-delete" variant="raised" color="secondary" onClick={this.openDeleteModal}>
+								Delete
+							</Button>
+						</div>
 
-				</div>
-			))}
-		</section>
-		This div has overflow: hidden.
-        <button onClick={this.handleShow}>Show modal</button>
-        {modal}
+					</div>
+				))}
+			</section>
+			{modal}
 		</div>
       )
     }

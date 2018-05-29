@@ -82,6 +82,7 @@ body {
 
 .events__container {
 	padding: 40px 120px;
+	clear: both;
 }
 
 .event.items--row{
@@ -150,6 +151,55 @@ body {
 	color: #757575;
 }
 
+.event__item-delete {
+	width: 160px;
+}
+.event__btn-add_container {
+    margin: 25px 0 0 120px;
+    float: right;
+    padding-right: 40px;
+}
+
+.event__btn-add_container::after {
+	clear: both;
+	display: block;
+	content: "";
+	float: none;
+}
+
+.event__item-add {
+	color: #fff;
+    background-color: #2196f3!important;
+}
+
+.modal__form-container {
+	width: 100%;
+	position: relative;
+}
+
+.modal__btn-close {
+    position: absolute;
+    top: 15px;
+    right: 17%;
+}
+
+.event__form {
+	width: 70%;
+    margin: auto;
+    background: #fff;
+    box-shadow: 0 0 15px rgba(0,0,0,0.5);
+    border-radius: 3px;
+    min-height: 50vh;
+    padding: 50px;
+    box-sizing: border-box;
+}
+.event__form > div {
+	margin-bottom: 12px;
+	color: #000;
+}
+.event__form label {
+	margin-right: 20px;
+}
 .backdrop {
   position: absolute;
   top: 0;
@@ -157,8 +207,10 @@ body {
   right: 0;
   bottom: 0;
   z-index: 0;
-  background: grey;
-  opacity: 0.5;
+  background: rgba(0,0,0,0);
+  filter: blur(3px);
+  opacity: .2;
+  transition: all .3s;
 }
 
 .backdrop:only-child {
@@ -177,7 +229,7 @@ body {
 }
 
 .modal {
-  background-color: rgba(0,0,0,0.5);
+  background-color: rgba(0,0,0,0.6);
   color: #fff;
   position: fixed;
   height: 100%;
