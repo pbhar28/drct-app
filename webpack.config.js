@@ -12,7 +12,7 @@ var config = {
 
 		devServer: {
 			contentBase: path.join(__dirname, "build"),
-			port: 3000
+			port: 4000
 		},
 
 		module: {
